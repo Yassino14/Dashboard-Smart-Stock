@@ -436,20 +436,20 @@
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-value" id="totalTrips">0</div>
-                    <div class="metric-label">Trajets Totaux</div>
+                    <div class="metric-label">Nombre d'opérations par jour</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="avgDistance">-</div>
-                    <div class="metric-label">Distance Moy. (m)</div>
+                    <div class="metric-label">Distance Quotidienne parcourue (moyenne) </div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="totalSavings">-</div>
-                    <div class="metric-label">Économies Totales</div>
+                    <div class="metric-label">Réduction coût par jour (TND)</div>
                     <div class="metric-change positive" id="savingsChange">-</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-value" id="co2Reduction">-</div>
-                    <div class="metric-label">Réduction CO₂</div>
+                    <div class="metric-label">Réduction CO₂ par jour</div>
                     <div class="metric-change positive" id="co2Change">-</div>
                 </div>
             </div>
@@ -553,6 +553,10 @@
                     <div class="metric-value" id="yearlyProjection">-</div>
                     <div class="metric-label">Écon. Annuelles Est.</div>
                 </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="monthlyCO2Projection">-</div>
+                    <div class="metric-label">CO₂ Économisé Mensuel Est.</div>
+                </div>
                  <div class="metric-card">
                     <div class="metric-value" id="yearlyCO2Projection">-</div>
                     <div class="metric-label">CO₂ Économisé Annuel Est.</div>
@@ -578,14 +582,6 @@
         <!-- Page 5: Analysis -->
         <div id="analysis" class="page">
             <h1 class="page-title">Analyse Détaillée</h1>
-            
-            <div class="card">
-                <h3 class="card-title">Corrélation : Distance vs. Coût</h3>
-                <div class="chart-container">
-                    <canvas id="scatterChart"></canvas>
-                </div>
-            </div>
-
             <div class="card-grid">
                 <div class="card">
                     <h3 class="card-title">Distribution des Distances de Trajet</h3>
@@ -1059,7 +1055,8 @@
                 
                 const yearlyCO2Savings = (oldMetrics.totalCO2 - optimizedMetrics.totalCO2) * 312; // 312 days a year
                 document.getElementById('yearlyCO2Projection').textContent = `${yearlyCO2Savings.toFixed(2)}kg`;
-
+                const monthlyCO2Savings = (oldMetrics.totalCO2 - optimizedMetrics.totalCO2) * 25; // 312 days a year
+                document.getElementById('monthlyCO2Projection').textContent = `${monthlyCO2Savings.toFixed(2)}kg`;
                 const oldCostSeries = [0];
                 const optimizedCostSeries = [0];
                 // Time points: Week 1 (6d), Week 2 (12d), Week 3 (18d), Month 1 (25d), Month 2 (50d), Month 3 (75d), Month 6 (150d), Year 1 (312d)
@@ -1119,38 +1116,6 @@
                      options: {...defaultChartOptions, scales: {...defaultChartOptions.scales, x: { grid: { display: false } } } }
                 });
             }
-
-            // Scatter Chart for Correlation Analysis
-            const scatterCtx = document.getElementById('scatterChart')?.getContext('2d');
-            if (scatterCtx) new Chart(scatterCtx, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'Ancien Sys. (Distance vs Coût)',
-                        data: oldDataParsed.map(row => ({ x: row['distance(m)'], y: row.cost })),
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)', 
-                        borderColor: 'rgb(255, 99, 132)',
-                        pointRadius: 5,
-                        pointHoverRadius: 8
-                    }, {
-                        label: 'Sys. Optimisé (Distance vs Coût)',
-                        data: optimizedDataParsed.map(row => ({ x: row['distance(m)'], y: row.cost })),
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)', 
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointRadius: 5,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    ...defaultChartOptions,
-                    scales: {
-                        ...defaultChartOptions.scales,
-                        x: { ...defaultChartOptions.scales.x, title: { display: true, text: 'Distance (m)', color: '#e0e0e0'}},
-                        y: { ...defaultChartOptions.scales.y, title: { display: true, text: 'Coût (TND)', color: '#e0e0e0'}}
-                    }
-                }
-            });
-
             // Distribution Chart (Histogram of Distances for Optimized System)
             const distributionCtx = document.getElementById('distributionChart')?.getContext('2d');
             if (distributionCtx && optimizedDataParsed.length > 0) {
