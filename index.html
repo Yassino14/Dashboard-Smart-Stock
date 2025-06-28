@@ -424,8 +424,8 @@
         <div class="nav-item active" onclick="navigateToPage('overview', this)">Aperçu</div>
         <div class="nav-item" onclick="navigateToPage('performance', this)">Performance</div>
         <div class="nav-item" onclick="navigateToPage('efficiency', this)">Efficacité</div> <!-- Corrected class attribute -->
-        <div class="nav-item" onclick="navigateToPage('projections', this)">Projections</div>
         <div class="nav-item" onclick="navigateToPage('analysis', this)">Analyse</div>
+        <div class="nav-item" onclick="navigateToPage('projections', this)">Projections</div>
     </nav>
 
     <div class="container">
@@ -462,7 +462,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h3 class="card-title">Comparaison Globale des Coûts</h3>
+                    <h3 class="card-title">Comparaison  des Coûts par jour</h3>
                     <div class="chart-container">
                         <canvas id="costChart"></canvas>
                     </div>
@@ -482,7 +482,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h3 class="card-title">Consommation Globale de Carburant</h3>
+                    <h3 class="card-title">Consommation de Carburant par Jour</h3>
                     <div class="chart-container">
                         <canvas id="fuelChart"></canvas>
                     </div>
@@ -490,7 +490,7 @@
             </div>
 
             <div class="card">
-                <h3 class="card-title">Tableau Comparatif des Performances</h3>
+                <h3 class="card-title">Tableau Comparatif des Performances par Jour</h3>
                 <div class="comparison-table">
                     <table>
                         <thead>
@@ -528,12 +528,7 @@
                     </div>
                 </div>
             </div>
-             <div class="card">
-                <h3 class="card-title">Coût par Kilomètre (par trajet)</h3>
-                <div class="chart-container">
-                    <canvas id="costPerKmChart"></canvas>
-                </div>
-            </div>
+             
         </div>
 
         <!-- Page 4: Projections -->
@@ -1011,32 +1006,7 @@
                 });
             }
             
-            // Cost per KM chart
-            const costPerKmCtx = document.getElementById('costPerKmChart')?.getContext('2d');
-            if(costPerKmCtx) {
-                const oldCostPerKm = oldDataParsed.map(d => d['distance(m)'] > 0 ? (d.cost / (d['distance(m)']/1000)) : 0);
-                const optimizedCostPerKm = optimizedDataParsed.map(d => d['distance(m)'] > 0 ? (d.cost / (d['distance(m)']/1000)) : 0);
-                new Chart(costPerKmCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: commonTripLabels,
-                        datasets: [{
-                            label: 'Ancien Système Coût/km (TND)',
-                            data: oldCostPerKm.map(val => val.toFixed(3)),
-                            backgroundColor: 'rgba(255, 193, 7, 0.7)', 
-                            borderColor: '#ffc107',
-                            borderWidth: 1
-                        }, {
-                            label: 'Système Optimisé Coût/km (TND)',
-                            data: optimizedCostPerKm.map(val => val.toFixed(3)),
-                            backgroundColor: 'rgba(139, 195, 74, 0.7)', 
-                            borderColor: '#8bc34a',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: defaultChartOptions
-                });
-            }
+            
 
             // Projection Charts
             const projectionCtx = document.getElementById('projectionChart')?.getContext('2d');
@@ -1051,7 +1021,7 @@
 
                 document.getElementById('weeklyProjection').textContent = `${projectionData.weekly.toFixed(2)} TND`;
                 document.getElementById('monthlyProjection').textContent = `${projectionData.monthly.toFixed(2)} TND`;
-                document.getElementById('yearlyProjection').textContent = `${projectionData.yearly.toFixed(2)} TND`;
+                document.getElementById('yearlyProjection').textContent = `${projectionData.yearly.toFixed(2)}TND`;
                 
                 const yearlyCO2Savings = (oldMetrics.totalCO2 - optimizedMetrics.totalCO2) * 312; // 312 days a year
                 document.getElementById('yearlyCO2Projection').textContent = `${yearlyCO2Savings.toFixed(2)}kg`;
